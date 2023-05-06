@@ -72,6 +72,8 @@ main h2 {
 
 .borderlist {
 	border: 1px solid black;
+	border-radius: 5px;
+	padding: 5px;
 	list-style-position: inside;
 }
 
