@@ -1,88 +1,73 @@
-// define canvas and context
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas = document.getElementById("canvas");
+		const ctx = canvas.getContext("2d");
 
-// define block size and colors
-const blockSize = 20;
-const colors = [
-  "#FF0000", // red
-  "#00FF00", // green
-  "#0000FF", // blue
-  "#FFFF00", // yellow
-  "#FF00FF", // magenta
-  "#00FFFF", // cyan
-  "#FFFFFF", // white
-];
+		const blockSize = 20;
+		const rows = canvas.height / blockSize;
+		const cols = canvas.width / blockSize;
 
-// define game state
-let blocks = [];
+		let blockColors = [];
+		for (let i = 0; i < rows; i++) {
+			blockColors[i] = [];
+			for (let j = 0; j < cols; j++) {
+				blockColors[i][j] = "#000";
+			}
+		}
 
-// add event listener for arrow keys
-document.addEventListener("keydown", handleKeyPress);
+		function drawBlock(x, y, color) {
+			ctx.fillStyle = color;
+			ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
+			ctx.strokeRect(x * blockSize, y * blockSize, blockSize, blockSize);
+		}
 
-// add event listener for animate button
-const animateButton = document.getElementById("animateButton");
-animateButton.addEventListener("click", animateGame);
+		function draw() {
+			for (let i = 0; i < rows; i++) {
+				for (let j = 0; j < cols; j++) {
+					drawBlock(j, i, blockColors[i][j]);
+				}
+			}
+		}
 
-// create initial game board
-createBoard();
+		canvas.addEventListener("mousemove", function(e) {
+			const x = Math.floor(e.offsetX / blockSize);
+			const y = Math.floor(e.offsetY / blockSize);
+			blockColors[y][x] = "#fff";
+		});
 
-// function to create initial game board
-function createBoard() {
-  for (let i = 0; i < canvas.width / blockSize; i++) {
-    let row = [];
-    for (let j = 0; j < canvas.height / blockSize; j++) {
-      row.push(Math.floor(Math.random() * colors.length));
-    }
-    blocks.push(row);
-  }
-  drawBlocks();
-}
+		canvas.addEventListener("click", function(e) {
+			const x = Math.floor(e.offsetX / blockSize);
+			const y = Math.floor(e.offsetY / blockSize);
+			blockColors[y][x] = "#fff";
+		});
 
-// function to draw all blocks on canvas
-function drawBlocks() {
-  for (let i = 0; i < blocks.length; i++) {
-    for (let j = 0; j < blocks[i].length; j++) {
-      ctx.fillStyle = colors[blocks[i][j]];
-      ctx.fillRect(
-        j * blockSize,
-        i * blockSize,
-        blockSize,
-        blockSize
-      );
-    }
-  }
-}
+		document.addEventListener("keydown", function(e) {
+			if (e.code === "Backspace") {
+				const x = Math.floor(currentX);
+				const y = Math.floor(currentY);
+				blockColors[y][x] = "#000";
+			}
+		});
 
-// function to handle arrow key presses
-function handleKeyPress(event) {
-  if (event.code === "ArrowUp") {
-    console.log("up arrow pressed");
-    // move block up
-  } else if (event.code === "ArrowDown") {
-    console.log("down arrow pressed");
-    // move block down
-  } else if (event.code === "ArrowLeft") {
-    console.log("left arrow pressed");
-    // move block left
-  } else if (event.code === "ArrowRight") {
-    console.log("right arrow pressed");
-    // move block right
-  } else if (event.code === "Backspace") {
-    console.log("backspace pressed");
-    // remove block at current position
-    const x = Math.floor(mouseX / blockSize);
-    const y = Math.floor(mouseY / blockSize);
-    blocks[y][x] = -1;
-    drawBlocks();
-  }
-}
+		let currentX = 0;
+		let currentY = 0;
+		document.addEventListener("keydown", function(e) {
+			if (e.code === "ArrowLeft" && currentX > 0) {
+				currentX--;
+			} else if (e.code === "ArrowRight" && currentX < cols - 1) {
+				currentX++;
+			} else if (e.code === "ArrowUp" && currentY > 0) {
+				currentY--;
+			} else if (e.code === "ArrowDown" && currentY < rows - 1) {
+				currentY++;
+			}
+		});
 
-// function to animate game
-function animateGame() {
-  // animate retro pixel rain
-  // draw smiley face
-  // wink
-  // animate retro pixel rain again
-  // reset game
-}
+		function update() {
+			drawBlock(Math.floor(currentX), Math.floor(currentY), "#fff");
+		}
+
+		function loop() {
+			update();
+			requestAnimationFrame(loop);
+		}
+
+		loop();
