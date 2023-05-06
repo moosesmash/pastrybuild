@@ -1,88 +1,106 @@
-// define canvas and context
-const canvas = document.getElementById("gameCanvas");
+// Initialize canvas
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-// define block size and colors
+// Set canvas dimensions
+canvas.width = 500;
+canvas.height = 500;
+
+// Set block size
 const blockSize = 20;
-const colors = [
-  "#FF0000", // red
-  "#00FF00", // green
-  "#0000FF", // blue
-  "#FFFF00", // yellow
-  "#FF00FF", // magenta
-  "#00FFFF", // cyan
-  "#FFFFFF", // white
-];
 
-// define game state
-let blocks = [];
+// Set colors
+const backgroundColor = "#000";
+const blockColor = "#fff";
 
-// add event listener for arrow keys
-document.addEventListener("keydown", handleKeyPress);
+// Create game state
+const gameState = {
+  blocks: [],
+  currentBlock: {
+    x: 0,
+    y: 0,
+  },
+};
 
-// add event listener for animate button
-const animateButton = document.getElementById("animateButton");
-animateButton.addEventListener("click", animateGame);
+// Function to draw the game
+function draw() {
+  // Clear canvas
+  ctx.fillStyle = backgroundColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-// create initial game board
-createBoard();
+  // Draw blocks
+  gameState.blocks.forEach((block) => {
+    ctx.fillStyle = blockColor;
+    ctx.fillRect(block.x, block.y, blockSize, blockSize);
+  });
 
-// function to create initial game board
-function createBoard() {
-  for (let i = 0; i < canvas.width / blockSize; i++) {
-    let row = [];
-    for (let j = 0; j < canvas.height / blockSize; j++) {
-      row.push(Math.floor(Math.random() * colors.length));
-    }
-    blocks.push(row);
-  }
-  drawBlocks();
+  // Draw current block
+  ctx.fillStyle = blockColor;
+  ctx.fillRect(
+    gameState.currentBlock.x,
+    gameState.currentBlock.y,
+    blockSize,
+    blockSize
+  );
 }
 
-// function to draw all blocks on canvas
-function drawBlocks() {
-  for (let i = 0; i < blocks.length; i++) {
-    for (let j = 0; j < blocks[i].length; j++) {
-      ctx.fillStyle = colors[blocks[i][j]];
-      ctx.fillRect(
-        j * blockSize,
-        i * blockSize,
-        blockSize,
-        blockSize
-      );
-    }
-  }
-}
+// Function to update the game
+function update() {
+  // Move current block down
+  gameState.currentBlock.y += blockSize;
 
-// function to handle arrow key presses
-function handleKeyPress(event) {
-  if (event.code === "ArrowUp") {
-    console.log("up arrow pressed");
-    // move block up
-  } else if (event.code === "ArrowDown") {
-    console.log("down arrow pressed");
-    // move block down
-  } else if (event.code === "ArrowLeft") {
-    console.log("left arrow pressed");
-    // move block left
-  } else if (event.code === "ArrowRight") {
-    console.log("right arrow pressed");
-    // move block right
-  } else if (event.code === "Backspace") {
-    console.log("backspace pressed");
-    // remove block at current position
-    const x = Math.floor(mouseX / blockSize);
-    const y = Math.floor(mouseY / blockSize);
-    blocks[y][x] = -1;
-    drawBlocks();
+  // Check if current block collides with any existing blocks
+  const collision = gameState.blocks.some((block) => {
+    return (
+      gameState.currentBlock.x === block.x &&
+      gameState.currentBlock.y === block.y - blockSize
+    );
+  });
+
+  // If there is a collision, add the current block to the blocks array and create a new current block at the top
+  if (collision || gameState.currentBlock.y >= canvas.height) {
+    gameState.blocks.push({
+      x: gameState.currentBlock.x,
+      y: gameState.currentBlock.y - blockSize,
+    });
+    gameState.currentBlock.x = Math.floor(Math.random() * canvas.width);
+    gameState.currentBlock.y = 0;
   }
 }
 
-// function to animate game
-function animateGame() {
-  // animate retro pixel rain
-  // draw smiley face
-  // wink
-  // animate retro pixel rain again
-  // reset game
+// Function to handle arrow key input
+function handleInput(e) {
+  switch (e.keyCode) {
+    case 37:
+      // Move left
+      gameState.currentBlock.x -= blockSize;
+      break;
+    case 38:
+      // Rotate block
+      // Not implemented in this version of the game
+      break;
+    case 39:
+      // Move right
+      gameState.currentBlock.x += blockSize;
+      break;
+    case 40:
+      // Move down
+      gameState.currentBlock.y += blockSize;
+      break;
+    case 8:
+      // Remove block at current position
+      gameState.blocks = gameState.blocks.filter((block) => {
+        return !(block.x === gameState.currentBlock.x && block.y === gameState.currentBlock.y);
+      });
+      break;
+  }
 }
+
+// Add event listener for arrow key input
+document.addEventListener("keydown", handleInput);
+
+// Start game loop
+setInterval(() => {
+  update();
+  draw();
+}, 1000 / 60);
