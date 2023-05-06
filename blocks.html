@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NVKT5Q8');</script>
+    <!-- End Google Tag Manager -->
+
+    <title>pjotm's playground</title>
+    <meta charset="UTF-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <link rel="stylesheet" href="style.css">
+
+      <style>
+		#game {
+			position: relative;
+			width: 800px;
+			height: 600px;
+			margin: 0 auto;
+			background-color: #ccc;
+		}
+		.block {
+			position: absolute;
+			width: 50px;
+			height: 50px;
+			background-color: #000;
+			cursor: pointer;
+		}
+		#smiley {
+			position: absolute;
+			width: 50px;
+			height: 50px;
+			background-image: url("https://i.imgur.com/OPk0aGK.png");
+			background-repeat: no-repeat;
+			background-position: 0px 0px;
+			left: 375px;
+			top: 250px;
+			z-index: 1000;
+			pointer-events: none;
+		}
+		#retro-rain {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.2);
+			background-size: 50px 50px;
+			background-image:
+				linear-gradient(to right, transparent 49%, #fff 50%),
+				linear-gradient(to bottom, transparent 49%, #fff 50%);
+			animation: retroRain 1s steps(4) infinite;
+			z-index: 1000;
+			opacity: 0;
+			pointer-events: none;
+		}
+		@keyframes retroRain {
+			from {background-position: 0px 0px;}
+			to {background-position: 50px 50px;}
+		}
+		 @keyframes wink {
+			from {background-position: 0px 0px;}
+			to {background-position: -50px 0px;}
+		}
+	</style>
+      
+  </head>
+
+
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVKT5Q8"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <div id="game"></div>
+	<button onclick="animateRetroRain()">Press me!</button>
+	<div id="retro-rain"></div>
+	<div id="smiley"></div>
+
+	<script>
+		var gameDiv = document.getElementById("game");
+		var blocks = [];
+		var retroRainDiv = document.getElementById("retro-rain");
+		var smileyDiv = document.getElementById("smiley");
+
+		document.addEventListener("keydown", function(event) {
+			var keyCode = event.keyCode || event.which;
+			if (keyCode === 37) { // ArrowLeft
+				removeBlock();
+			} else if (keyCode === 38) { // ArrowUp
+				addBlock("up");
+			} else if (keyCode === 39) { // ArrowRight
+				removeBlock();
+			} else if (keyCode === 40) { // ArrowDown
+				addBlock("down");
+			} else if (keyCode === 8) { // Backspace
+				removeBlock();
+			}
+		});
+
+		function addBlock(direction) {
+			var blockLeft = 0;
+			var blockTop = 0;
+			if (blocks.length > 0) {
+				var lastBlock = blocks[blocks.length - 1];
+				blockLeft = parseInt(lastBlock.style.left);
+				blockTop = parseInt(lastBlock.style.top);
+				if (direction === "up") {
+					blockTop -= 50;
+				} else if (direction === "down") {
+					blockLeft += 50;
+            }
+            var newBlock = document.createElement("div");
+            newBlock.classList.add("block");
+            newBlock.style.left = blockLeft + "px";
+            newBlock.style.top = blockTop + "px";
+            gameDiv.appendChild(newBlock);
+            blocks.push(newBlock);
+        }}
+
+        function removeBlock() {
+            if (blocks.length > 0) {
+                var lastBlock = blocks.pop();
+                gameDiv.removeChild(lastBlock);
+            }
+        }
+
+        function animateRetroRain() {
+            retroRainDiv.style.opacity = "1";
+            setTimeout(function() {
+                smileyDiv.style.backgroundPosition = "-50px 0px";
+                smileyDiv.style.animation = "wink 1s steps(1) infinite";
+                setTimeout(function() {
+                    resetGame();
+                }, 2000);
+            }, 2000);
+        }
+
+        function resetGame() {
+            for (var i = 0; i < blocks.length; i++) {
+                gameDiv.removeChild(blocks[i]);
+            }
+            blocks = [];
+            smileyDiv.style.backgroundPosition = "0px 0px";
+            smileyDiv.style.animation = "";
+            retroRainDiv.style.opacity = "0";
+        }
+    </script>
+        
+ 
+
+      <footer>
+        <p>&copy; 2023 Pjotr M. All rights reserved.</p>
+      </footer>
+    </div>
+  </body>
+</html>
