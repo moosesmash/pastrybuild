@@ -101,3 +101,19 @@ form input[type="submit"] {
 form input[type="submit"]:hover {
 	background-color: #a0a0a0;
 }
+
+@media only screen and (max-width: 600px) {
+	.nav-container {
+	  display: flex;
+	  flex-wrap: wrap;
+	}
+  
+	.borderlist {
+	  border-right: none;
+	  border-bottom: 1px solid #ffffff;
+	}
+  
+	.borderlist:last-child {
+	  border-bottom: none;
+	}
+  }
