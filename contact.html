@@ -33,18 +33,18 @@
 				</nav>
 			</header>
 			<main>
-				<form action="https://pjotm.com/send_email.php" method="post">
-					<label for="name">name:</label>
-					<input type="text" id="name" name="name">
-
-					<label for="email">email:</label>
-					<input type="email" id="email" name="email">
-
-					<label for="message">message:</label>
-					<textarea id="message" name="message"></textarea>
-
-					<input type="submit" value="Send">
-				</form>
+				<form id="fs-frm" name="simple-contact-form" accept-charset="utf-8" action="https://formspree.io/f/xayzvkya" method="post">
+					<fieldset id="fs-frm-inputs">
+					  <label for="full-name">name</label>
+					  <input type="text" name="name" id="full-name" placeholder="First and Last" required="">
+					  <label for="email-address">email address</label>
+					  <input type="email" name="_replyto" id="email-address" placeholder="email@domain.tld" required="">
+					  <label for="message">message...</label>
+					  <textarea rows="5" name="message" id="message" placeholder="...the...hotline..." required=""></textarea>
+					  <input type="hidden" name="_subject" id="email-subject" value="Contact Form Submission">
+					</fieldset>
+					<input type="submit" value="submit">
+				  </form>
 			</main>
 			<footer>
 				<p>&copy; 2023 pjotr m. all rights reserved.</p>
